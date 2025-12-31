@@ -81,6 +81,16 @@ Upon receiving the signal, the `security-response` Lambda parsed the CloudTrail 
   CloudWatch logs verifying the successful execution of the remediation logic, including the specific user targeted and the resulting SNS alert.
 </p>
 
+The Lambda function automatically publishes an alert to an SNS topic, which is immediately delivered to the security operations team.
+
+<p align="center">
+  <img src=".assets/Email alert.png" alt="Email Alert" width="600"/>
+  <br>
+  <b>Figure 6: Automated Security Notification</b>
+  <br><br>
+  An example of the email alert delivered via SNS, providing critical context about the quarantined user, the action taken, and the source event details.
+</p>
+
 ### Phase 5: Containment Verification
 
 The final step was verifying the effectiveness of the quarantine. Inspecting the created user in the IAM console confirms that the `AutomatedSecurityQuarantine` policy was successfully attached. The "Access denied" errors visible in the console prove that the policy immediately neutralized the user's ability to perform actions.
@@ -88,7 +98,7 @@ The final step was verifying the effectiveness of the quarantine. Inspecting the
 <p align="center">
   <img src=".assets/iam-user-policy-attached-quarantine.png" alt="IAM Policy Attachment" width="800"/>
   <br>
-  <b>Figure 6: Containment Validation</b>
+  <b>Figure 7: Containment Validation</b>
   <br><br>
   The target IAM user (`service-jmokoe`) shows the attached quarantine policy and active permission denials, proving the response was effective.
 </p>
