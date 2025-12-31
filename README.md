@@ -24,21 +24,25 @@ The following diagram illustrates the event-driven architecture. The workflow is
 <p align="center">
   <img src=".assets/Architecture Diagram.png" alt="Architecture Diagram" width="800"/>
   <br>
-  <b>Figure 1: High-Level Architecture. Threat detection moves from the left (Actor action) through the Control Plane (IAM/CloudTrail) to the Response Engine (EventBridge/Lambda), resulting in immediate identity quarantine.</b>
+  <b>Figure 1: High-Level Architecture</b>
+  <br>
+  Threat detection moves from the left (Actor action) through the Control Plane (IAM/CloudTrail) to the Response Engine (EventBridge/Lambda), resulting in immediate identity quarantine.
 </p>
 
 ---
 
 ## Implementation Phases
 
-### Phase 1: detection Logic (EventBridge)
+### Phase 1: Detection Logic (EventBridge)
 
 The core of the detection layer is an EventBridge rule configured to listen for specific management events. Instead of a broad catch-all, I defined a precise event pattern filtering for `CreateUser` API calls originating specifically from the `iam.amazonaws.com` event source.
 
 <p align="center">
   <img src=".assets/eventbridge-rule-pattern-createuser.png" alt="EventBridge Rule Pattern" width="800"/>
   <br>
-  <b>Figure 2: Precision Detection. The JSON event pattern used to filter the high-volume CloudTrail stream, isolating only the specific API calls that warrant an automated response.</b>
+  <b>Figure 2: Precision Detection Configuration</b>
+  <br>
+  The JSON event pattern used to filter the high-volume CloudTrail stream, isolating only the specific API calls that warrant an automated response.
 </p>
 
 ### Phase 2: Workflow Orchestration
@@ -48,7 +52,9 @@ To operationalize the logic, I wired the EventBridge rule directly to a Python-b
 <p align="center">
   <img src=".assets/lambda-trigger-eventbridge-attached.png" alt="Lambda Trigger Configuration" width="800"/>
   <br>
-  <b>Figure 3: Event Wiring. Validating the integration between the EventBridge detection rule and the downstream security-response Lambda function.</b>
+  <b>Figure 3: Event Wiring Validation</b>
+  <br>
+  Validating the integration between the EventBridge detection rule and the downstream security-response Lambda function.
 </p>
 
 ### Phase 3: Attack Simulation
@@ -58,7 +64,9 @@ To test the system under realistic conditions, I deployed a separate `attack-sim
 <p align="center">
   <img src=".assets/attack-simulation-cloudshell.png" alt="Attack Simulation" width="800"/>
   <br>
-  <b>Figure 4: Adversary Simulation. Invoking the attack-simulation Lambda from CloudShell to generate a live "Unauthorized User Creation" event in the environment.</b>
+  <b>Figure 4: Adversary Simulation</b>
+  <br>
+  Invoking the attack-simulation Lambda from CloudShell to generate a live "Unauthorized User Creation" event in the environment.
 </p>
 
 ### Phase 4: Automated Response & Logging
@@ -68,7 +76,9 @@ Upon receiving the signal, the `security-response` Lambda parsed the CloudTrail 
 <p align="center">
   <img src=".assets/cloudwatch-logs-quarantine.png" alt="CloudWatch Logs" width="800"/>
   <br>
-  <b>Figure 5: Operational Telemetry. CloudWatch logs verifying the successful execution of the remediation logic, including the specific user targeted and the resulting SNS alert.</b>
+  <b>Figure 5: Operational Telemetry</b>
+  <br>
+  CloudWatch logs verifying the successful execution of the remediation logic, including the specific user targeted and the resulting SNS alert.
 </p>
 
 ### Phase 5: Containment Verification
@@ -78,7 +88,9 @@ The final step was verifying the effectiveness of the quarantine. Inspecting the
 <p align="center">
   <img src=".assets/iam-user-policy-attached-quarantine.png" alt="IAM Policy Attachment" width="800"/>
   <br>
-  <b>Figure 6: Containment Validation. The target IAM user (`service-jmokoe`) shows the attached quarantine policy and active permission denials, proving the response was effective.</b>
+  <b>Figure 6: Containment Validation</b>
+  <br>
+  The target IAM user (`service-jmokoe`) shows the attached quarantine policy and active permission denials, proving the response was effective.
 </p>
 
 ---
